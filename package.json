@@ -1,0 +1,29 @@
+{
+  "name": "Matching-Engine-sweng",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "client": "cd react-front-end && npm start",
+    "client-init": "cd react-front-end && npm install",
+    "server": "cd backend-api && npm start",
+    "server-init": "cd backend-api && npm install",
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "first-time": "concurrently \"npm run client-init\" \"npm run server-init\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/john0doh/Matching-Engine-sweng.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/john0doh/Matching-Engine-sweng/issues"
+  },
+  "homepage": "https://github.com/john0doh/Matching-Engine-sweng#readme",
+  "devDependencies": {
+    "concurrently": "^5.3.0"
+  }
+}
