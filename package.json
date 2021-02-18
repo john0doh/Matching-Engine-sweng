@@ -1,5 +1,5 @@
 {
-  "name": "Matching-Engine-sweng",
+  "name": "matching-engine-sweng",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
@@ -10,7 +10,7 @@
     "server": "cd backend-api && npm start",
     "server-init": "cd backend-api && npm install",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "first-time": "concurrently \"npm run client-init\" \"npm run server-init\""
+    "first-time": "npm install && concurrently \"npm run client-init\" \"npm run server-init\""
   },
   "repository": {
     "type": "git",
