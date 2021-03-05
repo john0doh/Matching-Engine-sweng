@@ -1,6 +1,7 @@
 import React, { Component } from "react";
 import './App.css';
 import Table from 'react-bootstrap/Table'
+import Dropdown from 'react-bootstrap/Dropdown'
 
 //Using material ui to provide button functionality
 import Button from '@material-ui/core/Button';
@@ -45,6 +46,17 @@ class App extends Component {
         {/*This is the button that calls the api again. 
         The onClick method allows us to call another method when the button is clicked.*/}
         <Button variant="contained" color="primary" onClick={() => { this.callTestAPI2() }}>Click me</Button>
+            <Dropdown>
+                <Dropdown.Toggle variant="success" id="dropdown-basic">
+                    Currency
+                </Dropdown.Toggle>
+                <Dropdown.Menu>
+                    <Dropdown.Item href="#/action-1">Japanese Yen</Dropdown.Item>
+                    <Dropdown.Item href="#/action-2">Great British Pound</Dropdown.Item>
+                    <Dropdown.Item href="#/action-3">United States Dollar</Dropdown.Item>
+                    <Dropdown.Item href="#/action-4">Euro</Dropdown.Item>
+                </Dropdown.Menu>
+            </Dropdown>
             <Table striped bordered hover>
                 <thead>
                     <tr>
