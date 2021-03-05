@@ -37,7 +37,8 @@ class App extends Component {
       <div className="App">
         {/*This is the response from the API on the backend*/}
         <p className="App-intro">{this.state.apiResponse}</p>
-
+            <h1>test</h1>
+            <h2>test</h2>
         {/*This is the button that calls the api again. 
         The onClick method allows us to call another method when the button is clicked.*/}
         <Button variant="contained" color="primary" onClick={() => { this.callTestAPI2() }}>Click me</Button>
