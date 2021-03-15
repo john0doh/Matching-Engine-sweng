@@ -3,14 +3,19 @@
 }
 
 .App-header {
-  background-color: #34282e;
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+    background-image: url("https://media-exp1.licdn.com/dms/image/C4E1BAQF4m2uBROaBKg/company-background_10000/0?e=2159024400&v=beta&t=AJkAlhPoIJ-f6lv_B1syVp-Z6h9OmqkJNPjbdRzvybA");
+    background-size: 1000px;
+    background-repeat: no-repeat;
+    background-position: left top;
+    background-attachment: fixed;
+    background-color: #34282e;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: calc(10px + 2vmin);
+    color: white;
 }
 
 .App-link {
