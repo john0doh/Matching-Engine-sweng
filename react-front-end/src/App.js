@@ -83,7 +83,7 @@ constructor(props){
             </Dropdown>
             <Table striped bordered hover>
                 <thead>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <th>#####</th>
                         <th>Side</th>
                         <th>Symbol</th>
@@ -104,7 +104,7 @@ constructor(props){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                <tr style={{color:'black'}}>
                         <td>1</td>
                         <td>SELL</td>
                         <td>Toyota</td>
@@ -123,7 +123,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:15</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>2</td>
                         <td>SELL</td>
                         <td>UNH</td>
@@ -142,7 +142,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:16</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>3</td>
                         <td>BUY</td>
                         <td>VOD</td>
@@ -161,7 +161,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:15</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>4</td>
                         <td>BUY</td>
                         <td>MOO</td>
