@@ -1,6 +1,6 @@
 .App {
   text-align: center;
-  width: auto;
+  
   
 }
 
@@ -20,21 +20,22 @@
 }
 
 #dropdown-basic {
-  background-color: white; 
+  background-color: #4CAF50; 
   color: black; 
   border: 2px solid #4CAF50;
   
 }
 #dropdown-basic:hover {
-  background-color: #4CAF50;
+  background-color: rgb(60,87,175);
   color: white;
+  border: 2px solid rgb(60,87,175);
 }
 
 .App {
     background-image: url("https://media-exp1.licdn.com/dms/image/C4E1BAQF4m2uBROaBKg/company-background_10000/0?e=2159024400&v=beta&t=AJkAlhPoIJ-f6lv_B1syVp-Z6h9OmqkJNPjbdRzvybA");
     background-size: 1000px;
     background-repeat: no-repeat;
-    background-position:top;
+    background-position:top,center;
     background-attachment:local;
     background-color:rgba(0, 81, 255, 0.575);
     min-height: 100vh;
@@ -44,6 +45,14 @@
     justify-content: center;
     font-size:medium;
     color:white;
+}
+
+#select{
+  width: 500px;
+  border: 3px solid #078cf8;
+  color: #111111de;
+  height: fit-content;
+  
 }
 
 
