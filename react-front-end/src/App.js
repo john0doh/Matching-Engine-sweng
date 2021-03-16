@@ -183,7 +183,7 @@ constructor(props){
 
                 </tbody>
             </Table>
-            <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti />
+            <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti id ='select'/>
         {
            this.state.value === null ? "" : this.state.value.map(v => <h4>{v.label}</h4>)
         }
