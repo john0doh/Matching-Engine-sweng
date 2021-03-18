@@ -41,7 +41,6 @@ constructor(props){
   }
 
 
-
   //These methods simply ask the API whats at the specified endpoints.
   callTestAPI1() {
     fetch("http://localhost:9000/testAPI/test1")
@@ -63,14 +62,11 @@ constructor(props){
   render() {
     //Return the elements that we want rendered
     return (
+      
       <div className="App">
         {/*This is the response from the API on the backend*/}
             <p className="App-intro">{this.state.apiResponse}</p>
-
-            <h1>Matching Engine</h1>
-                
-                    
-          
+            <h1 style={{color: 'black'}}>Matching Engine</h1>
         {/*This is the button that calls the api again. 
         The onClick method allows us to call another method when the button is clicked.*/}
         <Button variant="contained" color="primary" onClick={() => { this.callTestAPI2() }}>Click me</Button>
@@ -87,7 +83,7 @@ constructor(props){
             </Dropdown>
             <Table striped bordered hover>
                 <thead>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <th>#####</th>
                         <th>Side</th>
                         <th>Symbol</th>
@@ -108,7 +104,7 @@ constructor(props){
                     </tr>
                 </thead>
                 <tbody>
-                    <tr>
+                <tr style={{color:'black'}}>
                         <td>1</td>
                         <td>SELL</td>
                         <td>Toyota</td>
@@ -127,7 +123,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:15</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>2</td>
                         <td>SELL</td>
                         <td>UNH</td>
@@ -146,7 +142,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:16</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>3</td>
                         <td>BUY</td>
                         <td>VOD</td>
@@ -165,7 +161,7 @@ constructor(props){
                         <td>loadofrandomnumbers</td>
                         <td>07:20:15</td>
                     </tr>
-                    <tr>
+                    <tr style={{color:'black'}}>
                         <td>4</td>
                         <td>BUY</td>
                         <td>MOO</td>
@@ -187,6 +183,12 @@ constructor(props){
 
                 </tbody>
             </Table>
+            <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti id ='select'/>
+        {
+           this.state.value === null ? "" : this.state.value.map(v => <h4>{v.label}</h4>)
+        }
+
+         
       </div>   
     );
   }
