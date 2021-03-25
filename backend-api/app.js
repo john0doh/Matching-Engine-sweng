@@ -10,6 +10,7 @@ var usersRouter = require('./routes/users');
 
 //This is the router that our API calls will use
 var testAPIRouter = require("./routes/testAPI");
+var dbRouter = require("./routes/dbAPI")
 
 var app = express();
 
@@ -30,6 +31,7 @@ app.use('/users', usersRouter);
 //This tells Express that if it sees a call that has /testAPI then it should
 //pass it on to the router for our test API
 app.use("/testAPI", testAPIRouter);
+app.use("/db",dbRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
