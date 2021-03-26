@@ -19,13 +19,25 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
         })
     });
 
+
+    // Finds items which match {attr:val} exactly in the db
+    // Only works for string equality at the moment
+    router.get("/match/:attr.eq.:val", function(req,res){
+      query = {}
+      var attr = req.params.attr;
+      var val = req.params.val
+
+      query[attr] = val
+      //console.log(query)
+
+      tradeCollection.find(query).toArray(function(err,result){
+        if (err) throw err
+        //console.log(result.length)
+        res.send(result);
+      });
+    });
+
   })
   .catch(error => console.error(error))
-
-
-// use GET /match/:attr.:eq.:val
-// router.get("/match/:attr.:eq.:val", function(req,res){
-    
-// });
 
 module.exports = router;
