@@ -40,7 +40,7 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
       //console.log(types,attr,types[attr])
 
       if(types[attr].endsWith("Array")){
-        if(types[attr].startWith("number")){
+        if(types[attr].startsWith("number")){
           query[attr] = [Number(val)]
         }
         else{
