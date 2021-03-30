@@ -26,7 +26,12 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
     //Gets the fields from the 1st time in the db
     //(assuming db follows a schema)
     router.get("/fields",function(req,res,next){
-      res.send(Object.keys(types))
+      result = {}
+      keyArr = Object.keys(types)
+      for(var i=0;i<keyArr.length;i++){
+        result[i] = keyArr[i]
+      }
+      res.send(result)
     });
 
 
