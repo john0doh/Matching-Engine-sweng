@@ -5,6 +5,9 @@ var MongoClient = require('mongodb').MongoClient
 var fs = require('fs');
 var password = fs.readFileSync("./routes/password.txt")
 
+// Types stores the names of the items in the db as well as their types
+var types = {}
+
 var url = "mongodb+srv://SWENGUser:"+password+"@swengcluster.mbqhh.mongodb.net/sample_mflix?retryWrites=true&w=majority"
 
 MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
@@ -15,7 +18,10 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
 
     router.get("/fields",function(req,res,next){
         tradeCollection.findOne({},function(err, result) {
-            res.send(Object.keys(result))
+            initTypes(result)
+            console.log(result)
+            res.send(Object.keys(types))
+            //res.send(types)
         })
     });
 
@@ -39,5 +45,22 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true })
 
   })
   .catch(error => console.error(error))
+
+function initTypes(result){
+  for (attr in result){
+    if(Array.isArray(result[attr])){
+      types[attr] = "" + (typeof result[attr][0]) + " Array"
+    }
+    else{
+      if(typeof result[attr] == "object" && attr != "_id"){
+        //recurse on nested objects to get all keys
+        initTypes(result[attr])
+      }
+      else{
+        types[attr] = typeof result[attr]
+      }
+    }
+  }
+}
 
 module.exports = router;
