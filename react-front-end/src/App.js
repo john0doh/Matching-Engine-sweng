@@ -19,16 +19,21 @@ class App extends Component {
     }
   }
   
-  async getOptions() {
-
- 
-    const res = await axios.get("http://localhost:9000/db/fields")
-    const data = res.data 
-    console.log(res.statusText)
-      
-    const options = data
+  async getOptions(){
     
-    this.setState({ selectOptions: options })
+    console.log("Hello World")
+    const res = await axios.get("http://localhost:9000/db/fields")
+    console.log(res.statusText)
+    const data = res.data
+
+    const options = data.map(d => ({
+      "value" : d.id,
+      "label" : d.name
+
+    }))
+
+    this.setState({selectOptions: options})
+
   } 
     
   handleChange(e) {
@@ -190,25 +195,10 @@ class App extends Component {
 
           </tbody>
         </Table>
+
+        <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti />
         {
-          
-        }
-
-         
-        <Select>{this.state.selectOptions.map((item, index) =>{ return( <option> {item} </option>)
-          })} </Select>
-
-
-
-
-
-        <Select options={this.state.selectOptions.map((item, index) =>{ return( <option> {item} </option>)
-          })} onChange={this.handleChange.bind(this)} isMulti id='select' />
-
-
-
-        {
-          this.state.value === null ? "" : this.state.value.map(v => <h4>{v.label}</h4>)
+           this.state.value === null ? "" : this.state.value.map(v => <h4>{v.label}</h4>)
         }
 
 
