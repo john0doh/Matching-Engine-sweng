@@ -15,29 +15,29 @@ class App extends Component {
     super(props)
     this.state = {
       selectOptions: [],
-      value: []
+      value: [] 
     }
   }
+  
   async getOptions() {
-    const res = await axios.get('https://jsonplaceholder.typicode.com/users')
-    const data = res.data
 
-    const options = data.map(d => ({
-      "value": d.id,
-      "label": d.name
-
-
-    }))
+ 
+    const res = await axios.get("http://localhost:9000/db/fields")
+    const data = res.data 
+    console.log(res.statusText)
+      
+    const options = data
+    
     this.setState({ selectOptions: options })
-  }
-
+  } 
+    
   handleChange(e) {
     this.setState({ id: e.value, name: e.label, })
-  }
+  }   
 
   componentDidMount() {
     this.getOptions()
-  }
+  } 
 
 
   //These methods simply ask the API whats at the specified endpoints.
@@ -59,6 +59,9 @@ class App extends Component {
   }
 
   render() {
+
+   
+   
     //Return the elements that we want rendered
     return (
 
@@ -187,7 +190,20 @@ class App extends Component {
 
           </tbody>
         </Table>
-        <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti id='select' />
+        {
+          
+        }
+
+         
+        <Select>{this.state.selectOptions.map((item, index) =>{ return( <option> {item} </option>)
+          })} </Select>
+
+
+
+
+
+        <Select options={this.state.selectOptions.map((item, index) =>{ return( <option> {item} </option>)
+          })} onChange={this.handleChange.bind(this)} isMulti id='select' />
 
 
 
