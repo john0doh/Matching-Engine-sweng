@@ -196,7 +196,7 @@ class App extends Component {
           </tbody>
         </Table>
 
-        <Select options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti />
+        <Select className = "select" options={this.state.selectOptions} onChange={this.handleChange.bind(this)} isMulti />
         {
            this.state.value === null ? "" : this.state.value.map(v => <h4>{v.label}</h4>)
         }
