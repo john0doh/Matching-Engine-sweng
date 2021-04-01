@@ -27,9 +27,9 @@ class App extends Component {
     const data = res.data
 
     const options = data.map(d => ({
-      "value" : d.id,
-      "label" : d.name
-
+      "value" : d.value,
+      "label" : d.label
+  
     }))
 
     this.setState({selectOptions: options})
