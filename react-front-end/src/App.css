@@ -51,6 +51,7 @@
 
 .select{
   width: 500px;
+
   border: 3px solid #078cf8;
   color: #111111de;
   height: fit-content;
@@ -91,3 +92,16 @@
 
 .App-link {
   color: #61dafb;}
+
+
+
+  .input{
+    width: 500px;
+    
+    border: 3px solid #078cf8;
+    color: #111111de;
+    height: fit-content;
+    
+  }
+    
+  
