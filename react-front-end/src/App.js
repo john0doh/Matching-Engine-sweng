@@ -80,7 +80,11 @@ class App extends Component {
     
     let object = {}
     object[this.state.id] = this.state.value
-    await axios.get("http://localhost:9000/db/fields")
+    await axios.get("http://localhost:9000/db/fields", {
+      params: {
+        object: object
+      }
+    })
 
 
   }
