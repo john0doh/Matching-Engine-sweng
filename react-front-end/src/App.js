@@ -42,8 +42,8 @@ class App extends Component {
     this.setState({ id: e.value, name: e.label, })
     
    
-       
   }   
+ 
 
   componentDidMount() {
     this.getOptions()
@@ -69,6 +69,20 @@ class App extends Component {
   //This method is a built in one called before the first render.
   componentWillMount() {
     this.callTestAPI1();
+  }
+
+  handleText(event){
+    this.setState({MyText: event.target.value})
+    
+  }
+
+  async handleSubmit(event) {
+    
+    let object = {}
+    object[this.state.id] = this.state.value
+    await axios.get("http://localhost:9000/db/fields")
+
+
   }
 
   render() {
@@ -103,35 +117,27 @@ class App extends Component {
               </div>
           </Dropdown.Menu>
         </Dropdown>
-       
-        <Form ref='simpleForm'>
-          <Field
-            name='city'
-            label='Select category to match:'
-            element= {
-              <Select className = 'select'
-                options={this.state.selectOptions}
-                valueAccessor={(selectedValue) => selectedValue.id}
-                onChange = {
-                 
-                  <div>
-                    
-                  <input className = 'input' type="text" name="name" />
-                  <input type="submit" value="Submit" />
-
-                  </div>
+          
+        <Form onSubmit = {this.handleSubmit}>
+              <Field
+                name='city'
+                label='Select City'
+                element= {
+                  <Select
+                    className = 'select'
+                    options={options}
+                    valueAccessor={(selectedValue) => selectedValue.label}
+                    onChange = {this.handleChange.bind(this)}
+                  isMulti />
                 }
+              />
+              
+                <input className = 'input' type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
+                
+                <input type = 'submit' value = 'submit' />
+             
+          </Form>
 
-              isMulti/>
-            }
-            
-          />
-           
-           <input className = 'input' type="text" name="name" />
-           <input type="submit" value="Submit" />
-           
-            
-      </Form>
 
       </div>
       
