@@ -4,7 +4,8 @@ import Table from 'react-bootstrap/Table'
 import Dropdown from 'react-bootstrap/Dropdown'
 import Select from 'react-select';
 import axios from 'axios'
-import {Form, Field} from 'simple-react-forms';
+import 'react-bootstrap-table/css/react-bootstrap-table.css';
+
 
 //Using material ui to provide button functionality
 import Button from '@material-ui/core/Button';
@@ -12,10 +13,10 @@ import Button from '@material-ui/core/Button';
 
 class App extends Component {
   //Constructor for our App class
-
+   
   constructor(props) {
     super(props)
-    this.state = {
+    this.state = {  
       selectOptions: [],
       value: [] 
     }
@@ -23,9 +24,8 @@ class App extends Component {
   
   async getOptions(){
     
-    console.log("Hello World")
+ 
     const res = await axios.get("http://localhost:9000/db/fields")
-    console.log(res.statusText)
     const data = res.data
 
     const options = data.map(d => ({
@@ -76,23 +76,72 @@ class App extends Component {
     
   }
 
-  async handleSubmit(event) {
+  async handleSubmit(e) {
     
-    let object = {}
-    object[this.state.id] = this.state.value
-    await axios.get("http://localhost:9000/db/fields", {
-      params: {
-        object: object
-      }
-    })
-
-
+    e.preventDefault()
+    console.log("Hello World")
+    
+    
+    const x = this.state.MyText
+    const y = this.state.name
+    console.log(x)
+    console.log(y)
+    const result = await axios.get('http://localhost:9000/db/match/'+ y + '.eq.'+ x)
+    const res = result.data
+    console.log(res)
+    this.setState({hasLoaded:true, results:res})
+      
   }
 
-  render() {
+  render() {  
     let options = this.state.selectOptions
+     
+    if(this.state.hasLoaded){
+      return(
+        
+         <Table striped bordered hover>
+           <thead>
+           <tr style={{ color: 'black' }}>
+              <th>Title</th>
+              <th>Genre</th>
+              <th>Awards</th>
+              <th>Rated</th>
+              <th>Year</th>
+             
+          
+            </tr>
 
-    
+           </thead>
+           <tbody>
+
+          {
+          
+          this.state.results.map((text, index)=>{
+            return(
+              <tr style={{ color: 'black' }}>
+                <td>{text.title} </td>
+                <td>{text.genres} </td>
+                <td>{text.awards.text} </td>
+                <td>{text.rated} </td>
+                <td>{text.year} </td>
+              
+              </tr>
+
+             
+
+            );
+            
+          } )
+          
+          }
+          </tbody>
+
+         
+        </Table>
+
+
+      );
+    }
    
    
     //Return the elements that we want rendered
@@ -122,25 +171,22 @@ class App extends Component {
           </Dropdown.Menu>
         </Dropdown>
           
-        <Form onSubmit = {this.handleSubmit}>
-              <Field
-                name='city'
-                label='Select City'
-                element= {
+        <form onSubmit = {this.handleSubmit.bind(this)}>
+             
                   <Select
                     className = 'select'
                     options={options}
                     valueAccessor={(selectedValue) => selectedValue.label}
                     onChange = {this.handleChange.bind(this)}
-                  isMulti />
-                }
-              />
+                  />
+                
+              
               
                 <input className = 'input' type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
                 
-                <input type = 'submit' value = 'submit' />
+                <input type = 'submit' value = 'Submit' />
              
-          </Form>
+          </form>
 
 
       </div>
