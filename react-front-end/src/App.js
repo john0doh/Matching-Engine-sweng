@@ -7,8 +7,7 @@ import axios from 'axios'
 import 'react-bootstrap-table/css/react-bootstrap-table.css';
 
 
-//Using material ui to provide button functionality
-import Button from '@material-ui/core/Button';
+
 
 
 class App extends Component {
@@ -151,9 +150,7 @@ class App extends Component {
         {/*This is the response from the API on the backend*/}
         <p className="App-intro">{this.state.apiResponse}</p>
         <h1 style={{ color: 'black' }}>Matching Engine</h1>
-        {/*This is the button that calls the api again. 
-        The onClick method allows us to call another method when the button is clicked.*/}
-        <Button variant="contained" color="primary" onClick={() => { this.callTestAPI2() }}>Click me</Button>
+        
 
         <Dropdown>
           <Dropdown.Toggle variant="success" id="dropdown-basic">
