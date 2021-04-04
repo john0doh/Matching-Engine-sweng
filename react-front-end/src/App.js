@@ -8,8 +8,6 @@ import 'react-bootstrap-table/css/react-bootstrap-table.css';
 
 
 
-
-
 class App extends Component {
   //Constructor for our App class
    
@@ -22,8 +20,7 @@ class App extends Component {
   }
   
   async getOptions(){
-    
- 
+
     const res = await axios.get("http://localhost:9000/db/fields")
     const data = res.data
 
@@ -78,16 +75,8 @@ class App extends Component {
   async handleSubmit(e) {
     
     e.preventDefault()
-    console.log("Hello World")
-    
-    
-    const x = this.state.MyText
-    const y = this.state.name
-    console.log(x)
-    console.log(y)
-    const result = await axios.get('http://localhost:9000/db/match/'+ y + '.eq.'+ x)
+    const result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
     const res = result.data
-    console.log(res)
     this.setState({hasLoaded:true, results:res})
       
   }
@@ -125,20 +114,11 @@ class App extends Component {
                 <td>{text.year} </td>
               
               </tr>
-
-             
-
             );
-            
-          } )
-          
+            }) 
           }
           </tbody>
-
-         
         </Table>
-
-
       );
     }
    
@@ -146,7 +126,7 @@ class App extends Component {
     //Return the elements that we want rendered
     return (
 
-      <div className="App">
+      <div className="App">  
         {/*This is the response from the API on the backend*/}
         <p className="App-intro">{this.state.apiResponse}</p>
         <h1 style={{ color: 'black' }}>Matching Engine</h1>
@@ -183,7 +163,7 @@ class App extends Component {
                 
                 <input type = 'submit' value = 'Submit' />
              
-          </form>
+        </form>
 
 
       </div>
