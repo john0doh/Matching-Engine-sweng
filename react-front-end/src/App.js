@@ -8,6 +8,7 @@ import 'react-bootstrap-table/css/react-bootstrap-table.css';
 
 
 
+
 class App extends Component {
   //Constructor for our App class
    
@@ -132,21 +133,7 @@ class App extends Component {
         <h1 style={{ color: 'black' }}>Matching Engine</h1>
         
 
-        <Dropdown>
-          <Dropdown.Toggle variant="success" id="dropdown-basic">
-            Currency
-                </Dropdown.Toggle>
-          <ul class="dropdown-menu dropdown-menu-right"></ul>
-          <Dropdown.Menu>
-              <div class="dropdown-content">
-
-                <Dropdown.Item href="#/action-1">Japanese Yen</Dropdown.Item>
-                <Dropdown.Item href="#/action-2">Great British Pound</Dropdown.Item>
-                <Dropdown.Item href="#/action-3">United States Dollar</Dropdown.Item>
-                <Dropdown.Item href="#/action-4">Euro</Dropdown.Item>
-              </div>
-          </Dropdown.Menu>
-        </Dropdown>
+       
           
         <form onSubmit = {this.handleSubmit.bind(this)}>
              
@@ -159,9 +146,9 @@ class App extends Component {
                 
               
               
-                <input className = 'input' type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
+                <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
                 
-                <input type = 'submit' value = 'Submit' />
+                <input className = 'button' type = 'submit' value = 'Submit' />
              
         </form>
 

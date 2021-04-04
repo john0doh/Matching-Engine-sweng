@@ -46,16 +46,30 @@
     font-size:medium;
     color:white;
 }
+.button{
+  background: white;
+  border-radius: 8px;
+  color: black;
+  
+}
+.button:hover{
+  background: darkgrey;
+ 
+  
+
+}
 
 
 
 .select{
   width: 500px;
-
-  border: 3px solid #078cf8;
   color: #111111de;
   height: fit-content;
   
+}
+.select:hover{
+  border: 3px solid #078cf8;
+
 }
 
 
@@ -96,12 +110,17 @@
 
 
   .input{
-    width: 500px;
-    
-    border: 3px solid #078cf8;
+    width: 490px;
+    margin: auto;
     color: #111111de;
-    height: fit-content;
+    height: 30px;
     
+    
+  }
+
+  .input:hover{
+    border: 3px solid #078cf8;
+
   }
     
   
