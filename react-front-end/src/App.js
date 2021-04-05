@@ -8,7 +8,6 @@ import 'react-bootstrap-table/css/react-bootstrap-table.css';
 
 
 
-
 class App extends Component {
   //Constructor for our App class
    
@@ -78,6 +77,7 @@ class App extends Component {
     e.preventDefault()
     const result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
     const res = result.data
+    console.log(res)
     this.setState({hasLoaded:true, results:res})
       
   }
@@ -92,9 +92,9 @@ class App extends Component {
            <thead>
            <tr style={{ color: 'black' }}>
               <th>Title</th>
-              <th>Genre</th>
               <th>Awards</th>
-              <th>Rated</th>
+              <th>Rating</th>
+              <th>Age Rate</th>
               <th>Year</th>
              
           
@@ -109,9 +109,9 @@ class App extends Component {
             return(
               <tr style={{ color: 'black' }}>
                 <td>{text.title} </td>
-                <td>{text.genres} </td>
                 <td>{text.awards.text} </td>
                 <td>{text.rated} </td>
+                <td>{text.imdb.rating} </td>
                 <td>{text.year} </td>
               
               </tr>
@@ -136,7 +136,7 @@ class App extends Component {
        
           
         <form onSubmit = {this.handleSubmit.bind(this)}>
-             
+                  
                   <Select
                     className = 'select'
                     options={options}
