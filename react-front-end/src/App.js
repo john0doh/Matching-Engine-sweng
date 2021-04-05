@@ -6,8 +6,6 @@ import Select from 'react-select';
 import axios from 'axios'
 import 'react-bootstrap-table/css/react-bootstrap-table.css';
 
-
-
 class App extends Component {
   //Constructor for our App class
    
@@ -88,14 +86,14 @@ class App extends Component {
     if(this.state.hasLoaded){
       return(
         
-         <Table striped bordered hover>
+         <Table striped bordered hover id="customers">
            <thead>
            <tr style={{ color: 'black' }}>
-              <th>Title</th>
-              <th>Awards</th>
-              <th>Rating</th>
-              <th>Age Rate</th>
-              <th>Year</th>
+              <th class = "left">Title </th>
+              <th class = "left">Genre</th>
+              <th class = "left">Awards</th>
+              <th class = "left">Rated</th>
+              <th class = "left">Year</th>
              
           
             </tr>
@@ -107,12 +105,12 @@ class App extends Component {
           
           this.state.results.map((text, index)=>{
             return(
-              <tr style={{ color: 'black' }}>
-                <td>{text.title} </td>
-                <td>{text.awards.text} </td>
-                <td>{text.rated} </td>
-                <td>{text.imdb.rating} </td>
-                <td>{text.year} </td>
+              <tr class = "alt"style={{ color: 'black' }}>
+                <td class = "box">{text.title} </td> 
+                <td class = "box">{text.genres} </td>
+                <td class = "box">{text.awards.text} </td>
+                <td class = "box">{text.rated} </td>
+                <td class = "box">{text.year} </td>
               
               </tr>
             );
@@ -126,35 +124,42 @@ class App extends Component {
    
     //Return the elements that we want rendered
     return (
+     
 
       <div className="App">  
         {/*This is the response from the API on the backend*/}
-        <p className="App-intro">{this.state.apiResponse}</p>
-        <h1 style={{ color: 'black' }}>Matching Engine</h1>
         
-
-       
-          
+        <p className="App-intro">{this.state.apiResponse}</p>
+        
+        <h1 class = "title">Matching Engine</h1>
         <form onSubmit = {this.handleSubmit.bind(this)}>
-                  
+
+
                   <Select
                     className = 'select'
                     options={options}
                     valueAccessor={(selectedValue) => selectedValue.label}
                     onChange = {this.handleChange.bind(this)}
                   />
-                
-              
-              
                 <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
-                
                 <input className = 'button' type = 'submit' value = 'Submit' />
              
         </form>
 
-
+        <div class="topnav">    
+      <a href="https://www.finbourne.com/about">About Us</a>
+      <a href="https://www.finbourne.com/lusid">LUSID</a>
+      <a href="https://www.finbourne.com/careers">Join Us</a>
+      <a href="https://www.finbourne.com/blog">Blog</a>
+      <a href="https://www.finbourne.com/events">Events</a>
+      <a href="https://www.finbourne.com/contact">Contact Us</a>
       </div>
+       
       
+      </div>
+     
+      
+    
 
    
     );
@@ -162,4 +167,3 @@ class App extends Component {
 }
 
 export default App;
-  
