@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "client": "cd react-front-end && npm start",
     "client-init": "cd react-front-end && npm install",
-    "server": "cd backend-api && npm start",
+    "server": "cd backend-api && npm run dev",
     "server-init": "cd backend-api && npm install",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
     "first-time": "npm install && concurrently \"npm run client-init\" \"npm run server-init\""
@@ -25,5 +25,9 @@
   "homepage": "https://github.com/john0doh/Matching-Engine-sweng#readme",
   "devDependencies": {
     "concurrently": "^5.3.0"
+  },
+  "dependencies": {
+    "react-bootstrap": "^1.5.2",
+    "react-bootstrap-table": "^4.3.1"
   }
 }
