@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient
 var date = require('mongodb').Date
+const multer = require('multer')
+
 
 var fs = require('fs');
 var password = fs.readFileSync("./routes/password.txt")
@@ -199,6 +201,35 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
       });
     });
 
+    router.post("/import", (req,res)=>{
+      let upload = multer({ storage: storage, fileFilter: csvFilter }).single('db_import');
+      upload(req, res, function(err) {
+        // req.file contains information of uploaded file
+        // req.body contains information of text fields, if there were any
+
+        if (req.fileValidationError) {
+            return res.send(req.fileValidationError);
+        }
+        else if (!req.file) {
+            return res.send('Please select an image to upload');
+        }
+        else if (err instanceof multer.MulterError) {
+            return res.send(err);
+        }
+        else if (err) {
+            return res.send(err);
+        }
+
+        docs = csvjson(req.file)
+
+        tradeCollection.insertMany(docs, function(err,result) {
+          if(err) throw err;
+          console.log('Docs Inserted :', result.insertedCount)
+        })
+
+        res.send("Upload succesful");
+    });
+  });
   })
   .catch(error => console.error(error))
 
@@ -298,6 +329,49 @@ function makeQuery(q){
   }
   //console.log(query)
   return query
+}
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'uploads/');
+  },
+
+  // By default, multer removes file extensions so let's add them back
+  filename: function(req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const csvFilter = function(req, file, cb) {
+  if(!file.originalname.match(/\.(csv|CSV)$/)){
+    req.fileValidationError="Only csv files are allowed";
+    return cb(new Error('Only csv files are allowed!'), false);
+  }
+  cb(null,true)
+}
+
+function csvjson(inputFile) {
+  csv({ checkType: true, output: "json" }).fromFile(inputFile).then((jsonObj)=>{         // convert CSV to JSON object
+
+    jsonStr = JSON.stringify(jsonObj)                          // prepare JSON string for parsing
+
+    docsObj = JSON.parse(jsonStr, function(key, value) {       // parse each key:value pair
+
+        if(key == "date" || key == "Date") {                    // if we have a date, add time offset and convert to ISO date object
+            dateArray = value.split("/")                                                          // split DD/MM/YYYY
+            dateStr = dateArray[2] + '/' + dateArray[1] + '/' + dateArray[0] + " 00:00:00.000"    // and convert to YYYY/MM/DD HH:MM:SS.ms
+            dateObj = new Date(dateStr)                           // create data object and adjust for TZ & DST
+            UTC_TZO = dateObj.getTimezoneOffset() * 60000
+            dateObj = new Date(dateObj.getTime() - UTC_TZO)
+            return dateObj                                        // replace original date string with date object
+        }
+        else {
+            return value                                          // otherwise just use original key value
+
+        }
+    })
+    return docsObj
+})
 }
 
 module.exports = router;
