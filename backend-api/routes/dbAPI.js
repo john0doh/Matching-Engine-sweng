@@ -173,11 +173,13 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
 
         docs = csvjson(req.file)
 
-        tradeCollection.insertMany(docs, function(err,result) {
-          if(err) throw err;
-          console.log('Docs Inserted :', result.insertedCount)
-          fs.unlinkSync(req.file);
-        })
+        console.log(docs)
+
+        // tradeCollection.insertMany(docs, function(err,result) {
+        //   if(err) throw err;
+        //   console.log('Docs Inserted :', result.insertedCount)
+        //   fs.unlinkSync(req.file);
+        // })
 
         res.send("Upload succesful");
     });
@@ -244,14 +246,14 @@ function makeQuery(attr, val, eq,q){
   //console.log(attr,types[attr])
 
   if(q["atol"]!=undefined && types[attr].startsWith("number")){
-    atol = Number(req.query.atol); 
+    atol = Number(q["atol"]); 
     tollow = Number(val)-atol;
     tolhi = Number(val)+atol;
     innerQuery = {$gte:tollow, $lte:tolhi};
     query[attr] = innerQuery;
   }
   else if(q["rtol"]!=undefined && types[attr].startsWith("number")){
-    rtol = Number(req.query.rtol); 
+    rtol = Number(q["rtol"]); 
     tollow = Number(val)-(Number(val)*rtol);
     tolhi = Number(val)+(Number(val)*rtol);
     innerQuery = {$gte:tollow, $lte:tolhi};
@@ -333,4 +335,3 @@ function dateFormat(jsonObj){
 }
 
 module.exports = router;
-
