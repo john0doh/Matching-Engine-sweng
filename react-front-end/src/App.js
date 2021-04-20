@@ -168,7 +168,7 @@ class App extends Component {
                     onChange = {this.handleChange.bind(this)}
                   />
                 <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
-                <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyTolerance} onChange = {this.handleTolerance.bind(this)} />
+                <input className = 'input' placeholder = '  Tolerance... 'type = 'text' name = 'name' value = {this.state.MyTolerance} onChange = {this.handleTolerance.bind(this)} />
                 <input className = 'button' type = 'submit' value = 'Submit' />
              
         </form>
