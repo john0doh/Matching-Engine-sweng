@@ -70,10 +70,36 @@ class App extends Component {
     
   }
 
+  handleTolerance(event){
+    this.setState({MyTolerance: event.target.value, isTolerance:true})
+    
+  }
+
   async handleSubmit(e) {
     
     e.preventDefault()
-    const result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
+    var result;
+
+    if(this.state.isTolerance){
+      result = await axios.get("http://localhost:9000/db/match/"+this.state.name + ".eq."+ this.state.MyText + "?atol=" + this.state.MyTolerance)
+
+    }
+    else{
+      switch(this.state.MyText.charAt(0)){
+        case '<':
+          result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.lt.'+ this.state.MyText.substring(1, this.state.MyText.length))
+        break
+        case '>':
+          result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.gt.'+ this.state.MyText.substring(1, this.state.MyText.length))
+        break
+          default:
+            result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
+  
+      }
+
+    }
+    
+    
     const res = result.data
     console.log(res)
     this.setState({hasLoaded:true, results:res})
@@ -142,6 +168,7 @@ class App extends Component {
                     onChange = {this.handleChange.bind(this)}
                   />
                 <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
+                <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyTolerance} onChange = {this.handleTolerance.bind(this)} />
                 <input className = 'button' type = 'submit' value = 'Submit' />
              
         </form>
