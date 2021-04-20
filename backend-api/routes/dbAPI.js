@@ -108,12 +108,15 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
       while(!logicalStack.isEmpty()){
         search = logicalStack.pop()
         console.log(search)
+        var attr = search["attr"]
+        var eq = search["eqType"]
+        var val = search["val"]
         if(search["operator"]=="and"){
-          tempQ = makeQuery(search)
+          tempQ = makeQuery(attr,val,eq,search)
           andquery.push(tempQ)
           console.log(andquery)
         }else if(search["operator"]=="or"){
-          tempQ = makeQuery(search)
+          tempQ = makeQuery(attr,val,eq,search)
           orquery.push(tempQ)
           console.log(orquery)
         }
@@ -121,12 +124,10 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
 
       //query doen't work if there's no and/or so dont include if so
       if(!andquery.length==0)
-        query["$and"] = andquery
+        localquery["$and"] = andquery
       if(!orquery.length==0)
         localquery["$or"] = orquery
-      //console.log("Query:\n")
-      //console.log(localquery)
-
+      console.log(localquery)
       //get query
       tradeCollection.find(localquery).toArray(function(err,result){
         if (err) throw err
@@ -136,68 +137,18 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
 
     // Finds items which match {attr:val} exactly in the db
     router.get("/match/:attr.:eq(lt|lte|gt|gte|eq).:val", function(req,res){
-      query = {}
-      eqtype = {}
+
       var attr = req.params.attr;
       var val = req.params.val
-      var eq = "$"+req.params.eq
-      
-      eqtype[eq] = "";
+      var eq = req.params.eq
 
-      console.log(attr,types[attr])
-
-      if(req.query.atol!=undefined && types[attr].startsWith("number")){
-        atol = Number(req.query.atol); 
-        tollow = Number(val)-atol;
-        tolhi = Number(val)+atol;
-        innerQuery = {$gte:tollow, $lte:tolhi};
-        query[attr] = innerQuery;
-      }
-      else if(req.query.rtol!=undefined && types[attr].startsWith("number")){
-        rtol = Number(req.query.rtol); 
-        tollow = Number(val)-(Number(val)*rtol);
-        tolhi = Number(val)+(Number(val)*rtol);
-        innerQuery = {$gte:tollow, $lte:tolhi};
-        query[attr] = innerQuery;
-      }
-      else if(types[attr].endsWith("Array")){
-        if(types[attr].startsWith("number")){
-          eqtype[eq] = [Number(val)]
-          query[attr] = eqtype
-        }
-        else if (types[attr].startsWith("date")){
-          Date_Obj = new Date(val)
-          UTC_TZO = Date_Obj.getTimezoneOffset() * 60000
-          E_Date = new Date(Date_Obj.getTime() - UTC_TZO)
-          eqtype[eq] = [E_Date]
-          query[attr] = eqtype
-        }else{
-          eqtype[eq] = val;
-          query[attr] = eqtype;
-        }
-      }
-      else{
-        if(types[attr].startsWith("number")){
-          eqtype[eq] = Number(val)
-          query[attr] = eqtype
-        }
-        else if(types[attr].startsWith("date")){
-          Date_Obj = new Date(val)
-          UTC_TZO = Date_Obj.getTimezoneOffset() * 60000
-          E_Date = new Date(Date_Obj.getTime() - UTC_TZO)
-          eqtype[eq] = E_Date
-          query[attr] = eqtype
-        }else{
-          eqtype[eq] = val;
-          query[attr] = eqtype
-        }
-      }
-      console.log(query)
+      query = makeQuery(attr,val,eq,req.query)
 
       tradeCollection.find(query).toArray(function(err,result){
         if (err) throw err
         //console.log(result.length)
-        res.send(result);
+        newRes = dateFormat(result)
+        res.send(newRes);
       });
     });
 
@@ -225,6 +176,7 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
         tradeCollection.insertMany(docs, function(err,result) {
           if(err) throw err;
           console.log('Docs Inserted :', result.insertedCount)
+          fs.unlinkSync(req.file);
         })
 
         res.send("Upload succesful");
@@ -282,12 +234,10 @@ function initTypes(result){
   }
 }
 
-function makeQuery(q){
+function makeQuery(attr, val, eq,q){
   query = {}
   eqtype = {}
-  var attr = q["attr"]
-  var val = q["val"]
-  var eq = "$"+q["eqType"]
+  var eq = "$"+eq
   
   eqtype[eq] = "";
 
@@ -352,12 +302,17 @@ const csvFilter = function(req, file, cb) {
 
 function csvjson(inputFile) {
   csv({ checkType: true, output: "json" }).fromFile(inputFile).then((jsonObj)=>{         // convert CSV to JSON object
+      docsObj=dateFormat(jsonObj);
+    })
+    return docsObj
+}
 
-    jsonStr = JSON.stringify(jsonObj)                          // prepare JSON string for parsing
+function dateFormat(jsonObj){
+  jsonStr = JSON.stringify(jsonObj)                          // prepare JSON string for parsing
 
     docsObj = JSON.parse(jsonStr, function(key, value) {       // parse each key:value pair
-
-        if(key == "date" || key == "Date") {                    // if we have a date, add time offset and convert to ISO date object
+      if(types[key]!=undefined){
+        if(types[key].startsWith("date")) {                    // if we have a date, add time offset and convert to ISO date object
             dateArray = value.split("/")                                                          // split DD/MM/YYYY
             dateStr = dateArray[2] + '/' + dateArray[1] + '/' + dateArray[0] + " 00:00:00.000"    // and convert to YYYY/MM/DD HH:MM:SS.ms
             dateObj = new Date(dateStr)                           // create data object and adjust for TZ & DST
@@ -369,9 +324,12 @@ function csvjson(inputFile) {
             return value                                          // otherwise just use original key value
 
         }
+        }else {
+          return value
+      }
     })
-    return docsObj
-})
+
+  return docsObj
 }
 
 module.exports = router;
