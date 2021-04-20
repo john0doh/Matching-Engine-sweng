@@ -2,6 +2,8 @@ var express = require("express");
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient
 var date = require('mongodb').Date
+const multer = require('multer')
+
 
 var fs = require('fs');
 var password = fs.readFileSync("./routes/password.txt")
@@ -46,7 +48,7 @@ var logicalStack = new Stack();
 
 var url = "mongodb+srv://SWENGUser:"+password+"@swengcluster.mbqhh.mongodb.net/sample_mflix?retryWrites=true&w=majority"
 
-MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false})
+MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(client => {
     console.log('Connected to Database')
     const db = client.db("sample_mflix")
@@ -106,12 +108,15 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoI
       while(!logicalStack.isEmpty()){
         search = logicalStack.pop()
         console.log(search)
+        var attr = search["attr"]
+        var eq = search["eqType"]
+        var val = search["val"]
         if(search["operator"]=="and"){
-          tempQ = makeQuery(search)
+          tempQ = makeQuery(attr,val,eq,search)
           andquery.push(tempQ)
           console.log(andquery)
         }else if(search["operator"]=="or"){
-          tempQ = makeQuery(search)
+          tempQ = makeQuery(attr,val,eq,search)
           orquery.push(tempQ)
           console.log(orquery)
         }
@@ -119,12 +124,10 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoI
 
       //query doen't work if there's no and/or so dont include if so
       if(!andquery.length==0)
-        query["$and"] = andquery
+        localquery["$and"] = andquery
       if(!orquery.length==0)
         localquery["$or"] = orquery
-      //console.log("Query:\n")
-      //console.log(localquery)
-
+      console.log(localquery)
       //get query
       tradeCollection.find(localquery).toArray(function(err,result){
         if (err) throw err
@@ -134,59 +137,51 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoI
 
     // Finds items which match {attr:val} exactly in the db
     router.get("/match/:attr.:eq(lt|lte|gt|gte|eq).:val", function(req,res){
-      query = {}
-      eqtype = {}
+
       var attr = req.params.attr;
       var val = req.params.val
-      var eq = "$"+req.params.eq
-      
-      eqtype[eq] = "";
+      var eq = req.params.eq
 
-      console.log(attr,types[attr])
-
-      if(req.query.atol!=undefined && types[attr].startsWith("number")){
-        atol = Number(req.query.atol); 
-        tollow = Number(val)-atol;
-        tolhi = Number(val)+atol;
-        innerQuery = {$gte:tollow, $lte:tolhi};
-        query[attr] = innerQuery;
-      }
-      else if(req.query.rtol!=undefined && types[attr].startsWith("number")){
-        rtol = Number(req.query.rtol); 
-        tollow = Number(val)-(Number(val)*rtol);
-        tolhi = Number(val)+(Number(val)*rtol);
-        innerQuery = {$gte:tollow, $lte:tolhi};
-        query[attr] = innerQuery;
-      }
-      else if(types[attr].endsWith("Array")){
-        if(types[attr].startsWith("number")){
-          eqtype[eq] = [Number(val)]
-          query[attr] = eqtype
-        }
-        else{
-          eqtype[eq] = val;
-          query[attr] = eqtype;
-        }
-      }
-      else{
-        if(types[attr].startsWith("number")){
-          eqtype[eq] = Number(val)
-          query[attr] = eqtype
-        }
-        else{
-          eqtype[eq] = val;
-          query[attr] = eqtype
-        }
-      }
-      console.log(query)
+      query = makeQuery(attr,val,eq,req.query)
 
       tradeCollection.find(query).toArray(function(err,result){
         if (err) throw err
         //console.log(result.length)
-        res.send(result);
+        newRes = dateFormat(result)
+        res.send(newRes);
       });
     });
 
+    router.post("/import", (req,res)=>{
+      let upload = multer({ storage: storage, fileFilter: csvFilter }).single('db_import');
+      upload(req, res, function(err) {
+        // req.file contains information of uploaded file
+        // req.body contains information of text fields, if there were any
+
+        if (req.fileValidationError) {
+            return res.send(req.fileValidationError);
+        }
+        else if (!req.file) {
+            return res.send('Please select an image to upload');
+        }
+        else if (err instanceof multer.MulterError) {
+            return res.send(err);
+        }
+        else if (err) {
+            return res.send(err);
+        }
+
+        docs = csvjson(req.file)
+
+        tradeCollection.insertMany(docs, function(err,result) {
+          if(err) throw err;
+          console.log('Docs Inserted :', result.insertedCount)
+          fs.unlinkSync(req.file);
+        })
+
+        res.send("Upload succesful");
+    });
+  });
   })
   .catch(error => console.error(error))
 
@@ -200,8 +195,10 @@ function initTypes(result){
 
     if(Array.isArray(result[attr])){
       if(typeof result[attr][0] == "string"){
-        console.log(result[attr][0].match(regex));
-        if(result[attr][0].match(regex)!=null){
+        //console.log(result[attr][0].match(regex));
+        Date_Obj = new Date(result[attr][0])
+        console.log(Date_Obj)
+        if(Date_Obj!="Invalid Date"){
           //is a date
           types[attr] = "date Array"
         }else{
@@ -221,7 +218,8 @@ function initTypes(result){
         //console.log(result[attr].match(regex))
         if(typeof result[attr] == "string"){
           //console.log(result[attr].match(regex))
-          if(result[attr].match(regex)!=null){
+          Date_Obj = new Date(result[attr])
+          if(Date_Obj!="Invalid Date"){
             types[attr] = "date";
           }else{
             //isnt a date
@@ -236,12 +234,10 @@ function initTypes(result){
   }
 }
 
-function makeQuery(q){
+function makeQuery(attr, val, eq,q){
   query = {}
   eqtype = {}
-  var attr = q["attr"]
-  var val = q["val"]
-  var eq = "$"+q["eqType"]
+  var eq = "$"+eq
   
   eqtype[eq] = "";
 
@@ -283,6 +279,57 @@ function makeQuery(q){
   }
   //console.log(query)
   return query
+}
+
+const storage = multer.diskStorage({
+  destination: function(req, file, cb) {
+      cb(null, 'uploads/');
+  },
+
+  // By default, multer removes file extensions so let's add them back
+  filename: function(req, file, cb) {
+      cb(null, file.fieldname + '-' + Date.now() + path.extname(file.originalname));
+  }
+});
+
+const csvFilter = function(req, file, cb) {
+  if(!file.originalname.match(/\.(csv|CSV)$/)){
+    req.fileValidationError="Only csv files are allowed";
+    return cb(new Error('Only csv files are allowed!'), false);
+  }
+  cb(null,true)
+}
+
+function csvjson(inputFile) {
+  csv({ checkType: true, output: "json" }).fromFile(inputFile).then((jsonObj)=>{         // convert CSV to JSON object
+      docsObj=dateFormat(jsonObj);
+    })
+    return docsObj
+}
+
+function dateFormat(jsonObj){
+  jsonStr = JSON.stringify(jsonObj)                          // prepare JSON string for parsing
+
+    docsObj = JSON.parse(jsonStr, function(key, value) {       // parse each key:value pair
+      if(types[key]!=undefined){
+        if(types[key].startsWith("date")) {                    // if we have a date, add time offset and convert to ISO date object
+            dateArray = value.split("/")                                                          // split DD/MM/YYYY
+            dateStr = dateArray[2] + '/' + dateArray[1] + '/' + dateArray[0] + " 00:00:00.000"    // and convert to YYYY/MM/DD HH:MM:SS.ms
+            dateObj = new Date(dateStr)                           // create data object and adjust for TZ & DST
+            UTC_TZO = dateObj.getTimezoneOffset() * 60000
+            dateObj = new Date(dateObj.getTime() - UTC_TZO)
+            return dateObj                                        // replace original date string with date object
+        }
+        else {
+            return value                                          // otherwise just use original key value
+
+        }
+        }else {
+          return value
+      }
+    })
+
+  return docsObj
 }
 
 module.exports = router;
