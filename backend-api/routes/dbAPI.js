@@ -46,7 +46,7 @@ var logicalStack = new Stack();
 
 var url = "mongodb+srv://SWENGUser:"+password+"@swengcluster.mbqhh.mongodb.net/sample_mflix?retryWrites=true&w=majority"
 
-MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoIndex: false})
+MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
   .then(client => {
     console.log('Connected to Database')
     const db = client.db("sample_mflix")
@@ -163,7 +163,13 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoI
           eqtype[eq] = [Number(val)]
           query[attr] = eqtype
         }
-        else{
+        else if (types[attr].startsWith("date")){
+          Date_Obj = new Date(val)
+          UTC_TZO = Date_Obj.getTimezoneOffset() * 60000
+          E_Date = new Date(Date_Obj.getTime() - UTC_TZO)
+          eqtype[eq] = [E_Date]
+          query[attr] = eqtype
+        }else{
           eqtype[eq] = val;
           query[attr] = eqtype;
         }
@@ -173,7 +179,13 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, autoI
           eqtype[eq] = Number(val)
           query[attr] = eqtype
         }
-        else{
+        else if(types[attr].startsWith("date")){
+          Date_Obj = new Date(val)
+          UTC_TZO = Date_Obj.getTimezoneOffset() * 60000
+          E_Date = new Date(Date_Obj.getTime() - UTC_TZO)
+          eqtype[eq] = E_Date
+          query[attr] = eqtype
+        }else{
           eqtype[eq] = val;
           query[attr] = eqtype
         }
@@ -200,8 +212,10 @@ function initTypes(result){
 
     if(Array.isArray(result[attr])){
       if(typeof result[attr][0] == "string"){
-        console.log(result[attr][0].match(regex));
-        if(result[attr][0].match(regex)!=null){
+        //console.log(result[attr][0].match(regex));
+        Date_Obj = new Date(result[attr][0])
+        console.log(Date_Obj)
+        if(Date_Obj!="Invalid Date"){
           //is a date
           types[attr] = "date Array"
         }else{
@@ -221,7 +235,8 @@ function initTypes(result){
         //console.log(result[attr].match(regex))
         if(typeof result[attr] == "string"){
           //console.log(result[attr].match(regex))
-          if(result[attr].match(regex)!=null){
+          Date_Obj = new Date(result[attr])
+          if(Date_Obj!="Invalid Date"){
             types[attr] = "date";
           }else{
             //isnt a date
