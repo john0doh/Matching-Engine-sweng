@@ -146,6 +146,15 @@ table{
   background-color: #ffffff;
 }
 
+.tolerance{
+  position: absolute center;
+  font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;
+  width: 70px;
+  margin-left: 50px;
+  margin-top: 12px;
+  color: #111111de;
+  height: 40px;}
+
   .input{
     position: absolute center;
     font-family:"Trebuchet MS", Arial, Helvetica, sans-serif;

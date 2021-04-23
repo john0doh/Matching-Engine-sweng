@@ -1,7 +1,7 @@
 import React, { Component } from "react";
 import './App.css';
 import Table from 'react-bootstrap/Table'
-import Dropdown from 'react-bootstrap/Dropdown'
+
 import Select from 'react-select';
 import axios from 'axios'
 import 'react-bootstrap-table/css/react-bootstrap-table.css';
@@ -37,6 +37,13 @@ class App extends Component {
     
    
   }   
+
+  handleMulti(event){
+    if(event.label === "Multiple and" || event.label === "Multiple or"){
+      this.setState({isMulti:true, op:event.value})
+    }
+    
+  }
  
 
   componentDidMount() {
@@ -70,6 +77,11 @@ class App extends Component {
     
   }
 
+  handleClick(event){
+    this.setState({isResolve: true})
+    
+  }
+
   handleTolerance(event){
     this.setState({MyTolerance: event.target.value, isTolerance:true})
     
@@ -79,9 +91,38 @@ class App extends Component {
     
     e.preventDefault()
     var result;
+    
+    
+    if(this.state.isMulti){
+
+      switch(this.state.op){
+        case 'or':
+          result = await axios.get("http://localhost:9000/db/or/" + this.state.name + ".eq." + this.state.MyText)
+        break
+
+        case 'and':
+          result = await axios.get("http://localhost:9000/db/and/" + this.state.name + ".eq." + this.state.MyText)
+        break
+
+
+          default:
+      }
+      
+
+      if(this.state.isResolve){
+        result = await axios.get("http://localhost:9000/db/match/resolve")
+        const res = result.data
+        console.log(res)
+        this.setState({hasLoaded:true, results:res})
+      }
+
+    }
+    else{
 
     if(this.state.isTolerance){
-      result = await axios.get("http://localhost:9000/db/match/"+this.state.name + ".eq."+ this.state.MyText + "?atol=" + this.state.MyTolerance)
+      result = await axios.get("http://localhost:9000/db/match/"+ this.state.name + ".eq."+ this.state.MyText + "/?atol=" + this.state.MyTolerance)
+
+    
 
     }
     else{
@@ -96,18 +137,25 @@ class App extends Component {
             result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
   
       }
+      const res = result.data
+      console.log(res)
+      this.setState({hasLoaded:true, results:res})
 
     }
+  }
     
-    
-    const res = result.data
-    console.log(res)
-    this.setState({hasLoaded:true, results:res})
+
       
   }
 
   render() {  
     let options = this.state.selectOptions
+    let options1 = [
+      { value: 'and', label: 'Multiple and' },
+      { value: 'or', label: 'Multiple or' },
+      { value: 'Single', label: 'Single' },
+     
+    ]
      
     if(this.state.hasLoaded){
       return(
@@ -129,13 +177,14 @@ class App extends Component {
 
           {
           
+          
           this.state.results.map((text, index)=>{
             return(
               <tr class = "alt"style={{ color: 'black' }}>
                 <td class = "box">{text.title} </td> 
                 <td class = "box">{text.genres} </td>
                 <td class = "box">{text.awards.text} </td>
-                <td class = "box">{text.rated} </td>
+                <td class = "box">{text.runtime} </td>
                 <td class = "box">{text.year} </td>
               
               </tr>
@@ -160,15 +209,24 @@ class App extends Component {
         <h1 class = "title">Matching Engine</h1>
         <form onSubmit = {this.handleSubmit.bind(this)}>
 
-
+                  
+                   <Select
+                    className = 'select'
+                    options={options1}
+                    valueAccessor={(selectedValue) => selectedValue.label}
+                    onChange = {this.handleMulti.bind(this)}
+                  />
                   <Select
                     className = 'select'
                     options={options}
                     valueAccessor={(selectedValue) => selectedValue.label}
                     onChange = {this.handleChange.bind(this)}
                   />
+                 
+                  
                 <input className = 'input' placeholder = '  Enter..... 'type = 'text' name = 'name' value = {this.state.MyText} onChange = {this.handleText.bind(this)} />
-                <input className = 'input' placeholder = '  Tolerance... 'type = 'text' name = 'name' value = {this.state.MyTolerance} onChange = {this.handleTolerance.bind(this)} />
+                <input className = 'tolerance' placeholder = '  Tolerance'type = 'text' name = 'name' value = {this.state.MyTolerance} onChange = {this.handleTolerance.bind(this)} />
+                <input className = 'button' type = 'submit' value = 'Resolve' onClick = {this.handleClick.bind(this)} />
                 <input className = 'button' type = 'submit' value = 'Submit' />
              
         </form>
