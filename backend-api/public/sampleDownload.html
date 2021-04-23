@@ -1,0 +1,32 @@
+<html>
+    <head>
+     <script type="text/javascript">
+     function ExampleJS(){
+        var jAttr = document.getElementById("fname").value;
+        var jVar = document.getElementById("lname").value;
+        var xhr = new XMLHttpRequest(); 
+        var query = jAttr+"."+"eq."+jVar+"/?csv=1"
+        xhr.open('GET','../db/match/'+query, false)
+        try {
+            xhr.send();
+            if (xhr.status != 200) {
+                alert(`Error ${xhr.status}: ${xhr.statusText}`);
+            } else {
+                alert(xhr.response);
+            }
+        } catch(err) { // instead of onerror
+            alert("Request failed");
+        }
+     }
+     </script>
+
+    </head>
+    <body>
+        <FORM NAME="myform" onSubmit="JavaScript:ExampleJS()">
+
+             First name: <input type="text" id="fname" name="firstname" /><br />
+             Last name:  <input type="text" id="lname" name="lastname" /><br />
+            <input name="Submit"  type="submit" value="Update" />
+        </FORM>
+    </body>
+</html>
