@@ -95,6 +95,45 @@ class App extends Component {
     
     if(this.state.isMulti){
 
+      if(this.state.isTolerance){
+        var s = this.state.MyTolerance
+        switch(s.charAt(s.length-1)){
+          case '%':
+            switch(this.state.op){
+              case 'or':
+                result = await axios.get("http://localhost:9000/db/or/" + this.state.name + ".eq." + this.state.MyText+"/?rtol="+ s.substring(0,s.length-1))
+              break
+      
+              case 'and':
+                result = await axios.get("http://localhost:9000/db/and/" + this.state.name + ".eq." + this.state.MyText+"/?rtol="+ s.substring(0,s.length-1))
+              break
+      
+                default:
+            }
+            break
+  
+            default:
+              switch(this.state.op){
+                case 'or':
+                  result = await axios.get("http://localhost:9000/db/or/" + this.state.name + ".eq." + this.state.MyText+"/?atol="+ s)
+                break
+        
+                case 'and':
+                  result = await axios.get("http://localhost:9000/db/and/" + this.state.name + ".eq." + this.state.MyText+"/?atol="+ s)
+                break
+        
+                  default:
+              }
+              
+  
+  
+        }
+
+     
+
+      }
+      else{
+        
       switch(this.state.op){
         case 'or':
           result = await axios.get("http://localhost:9000/db/or/" + this.state.name + ".eq." + this.state.MyText)
@@ -107,6 +146,9 @@ class App extends Component {
 
           default:
       }
+
+      }
+
       
 
       if(this.state.isResolve){
@@ -120,7 +162,18 @@ class App extends Component {
     else{
 
     if(this.state.isTolerance){
-      result = await axios.get("http://localhost:9000/db/match/"+ this.state.name + ".eq."+ this.state.MyText + "/?atol=" + this.state.MyTolerance)
+      s = this.state.MyTolerance
+      switch(s.charAt(s.length-1)){
+        case '%':
+          result = await axios.get("http://localhost:9000/db/match/"+ this.state.name + ".eq."+ this.state.MyText + "/?rtol=" + s.substring(0,s.length-1 ))
+          break
+
+          default:
+            result = await axios.get("http://localhost:9000/db/match/"+ this.state.name + ".eq."+ this.state.MyText + "/?atol=" + this.state.MyTolerance)
+
+
+      }
+     
 
     
 
@@ -137,11 +190,12 @@ class App extends Component {
             result = await axios.get('http://localhost:9000/db/match/'+  this.state.name + '.eq.'+ this.state.MyText)
   
       }
-      const res = result.data
-      console.log(res)
-      this.setState({hasLoaded:true, results:res})
+     
 
     }
+    const res = result.data
+    console.log(res)
+    this.setState({hasLoaded:true, results:res})
   }
     
 
@@ -166,7 +220,7 @@ class App extends Component {
               <th class = "left">Title </th>
               <th class = "left">Genre</th>
               <th class = "left">Awards</th>
-              <th class = "left">Rated</th>
+              <th class = "left">Runtime</th>
               <th class = "left">Year</th>
              
           
