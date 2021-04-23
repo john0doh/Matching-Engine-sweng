@@ -1,7 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var MongoClient = require('mongodb').MongoClient
+const Json2csvParser = require("json2csv").Parser
 var date = require('mongodb').Date
+const path = require('path')
 const multer = require('multer')
 
 
@@ -148,7 +150,25 @@ MongoClient.connect(url, {useNewUrlParser: true, useUnifiedTopology: true})
         if (err) throw err
         //console.log(result.length)
         newRes = dateFormat(result)
-        res.send(newRes);
+        console.log(req.query)
+        if(req.query.csv == 1){
+          dateObj = new Date()                                                        // assign a unique name to CSV file
+          HTTP_OutputFile_Ref = path.join(__dirname, dateObj.getTime() + ".csv")
+
+          json2csvParser = new Json2csvParser({ header: true })                       // convert result object to CSV and keep header
+          csvData = json2csvParser.parse(newRes);
+
+          fs.writeFile(HTTP_OutputFile_Ref, csvData, function(error) {                 // write CSV file
+              if (error) throw error;
+              console.log(HTTP_OutputFile_Ref)
+              res.sendFile(HTTP_OutputFile_Ref, function(nerr){
+                if(nerr) throw nerr
+                fs.unlinkSync(HTTP_OutputFile_Ref)
+              })
+          })
+        }else{
+          res.send(newRes);
+        }
       });
     });
 
